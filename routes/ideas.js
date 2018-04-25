@@ -52,6 +52,7 @@ router.post('/', (req, res) => {
       details: req.body.details
     });
   } else {
+
     const newUser = {
       title: req.body.title,
       details: req.body.details
