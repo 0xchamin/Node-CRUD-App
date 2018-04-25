@@ -6,12 +6,17 @@ const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 const flash = require('connect-flash');
 const session = require('express-session');
+const passport = require('passport');
+
 
 const app = express();
 
 //load routes
 const ideas = require('./routes/ideas');//
 const users = require('./routes/users');//users
+
+//Passport config
+require('./config/passport')(passport); //passing password to the config function
 
 // Map global promise - get rid of warning
 mongoose.Promise = global.Promise;
@@ -47,6 +52,10 @@ app.use(session({
 	//cookie: {secure : true}
 }));
 
+//Passport middleware
+app.use(passport.initialize());
+app.use(passport.session());
+
 //Middleware for connect-flash
 app.use(flash());
 
@@ -55,6 +64,7 @@ app.use(function(req, res, next){
 	res.locals.success_msg = req.flash('success_msg');
 	res.locals.error_msg = req.flash('error_msg');
 	res.locals.error = req.flash('error');
+  res.locals.user = req.user || null; //if user is logged in, get user 
 	next();//call next piece of middleware
 });
 
